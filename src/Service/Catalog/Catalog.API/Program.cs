@@ -1,7 +1,4 @@
-using BuildingBlocks.Behaviors;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using OpenTelemetry.Trace;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,37 +19,41 @@ builder.Services.AddMarten(opts =>
    opts.Connection(builder.Configuration.GetConnectionString("Database")!);
 }).UseLightweightSessions();
 
+
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
   
 var app = builder.Build();
 
 app.MapCarter();
 
-app.UseExceptionHandler( exceptionhandlerApp =>
-{
-    exceptionhandlerApp.Run(async context =>
-    {
-        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
-        if (exception == null)
-        {
-            return;
-        }
+app.UseExceptionHandler(options => { });
 
-        var problemDetails = new ProblemDetails
-        {
-            Title = exception.Message,
-            Status = StatusCodes.Status500InternalServerError,
-            Detail = exception.StackTrace
-        };
+//app.UseExceptionHandler( exceptionhandlerApp =>
+//{
+//    exceptionhandlerApp.Run(async context =>
+//    {
+//        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+//        if (exception == null)
+//        {
+//            return;
+//        }
 
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-        logger.LogError(exception, exception.Message);
+//        var problemDetails = new ProblemDetails
+//        {
+//            Title = exception.Message,
+//            Status = StatusCodes.Status500InternalServerError,
+//            Detail = exception.StackTrace
+//        };
 
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        context.Response.ContentType = "application/problem+json";
+//        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+//        logger.LogError(exception, exception.Message);
 
-        await context.Response.WriteAsJsonAsync(problemDetails);
-    });
-});
+//        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+//        context.Response.ContentType = "application/problem+json";
+
+//        await context.Response.WriteAsJsonAsync(problemDetails);
+//    });
+//});
 
 app.Run();
  
