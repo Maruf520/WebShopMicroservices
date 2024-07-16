@@ -1,6 +1,7 @@
 ﻿
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace BuildingBlocks.Behaviors
 {
@@ -9,9 +10,24 @@ namespace BuildingBlocks.Behaviors
         where TRequest : notnull, IRequest<TResponse>
         where TResponse : notnull
     {
-        public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+               logger.LogInformation("[START] Handle request={Request} - Response={Response} - RequestData={RequestData}",
+                  typeof(TRequest).Name, typeof(TResponse).Name, request);
+            var timer = new Stopwatch();
+            timer.Start();
+
+            var response = await next();
+
+            timer.Stop();
+            var timeToken = timer.Elapsed;
+            if (timeToken.Seconds > 3)
+            {
+                logger.LogWarning("[PERFORMANCE] The request {Request} took {TimeTaken} Seconds.", 
+                    typeof(TRequest).Name, timeToken.Seconds);
+            }
+            logger.LogInformation("[END] Handled {Request} with {Response}", typeof(TRequest), typeof(TResponse).Name);
+            return response;
         }
     }
 }
