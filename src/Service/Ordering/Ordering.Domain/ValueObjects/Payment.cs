@@ -6,10 +6,10 @@
         public string CardNumber { get; } = default!;
         public string Expiration { get; } = default!;
         public string CVV { get; } = default!;
-        public string PaymentMethod { get; } = default!;
+        public int PaymentMethod { get; } = default!;
 
         protected Payment() { }
-        private Payment(string cardName, string cardNumber, string expiratoin, string cVV, string paymentMethod)
+        private Payment(string cardName, string cardNumber, string expiratoin, string cVV, int paymentMethod)
         {
             CardName = cardName; 
             CardNumber = cardNumber; 
@@ -18,7 +18,7 @@
             PaymentMethod = paymentMethod;
         }
 
-        public static Payment Of(string cardName, string cardNumber, string expiratoin, string cVV, string paymentMethod)
+        public static Payment Of(string cardName, string cardNumber, string expiratoin, string cVV, int paymentMethod)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(cardName);
             ArgumentException.ThrowIfNullOrWhiteSpace(cardNumber);

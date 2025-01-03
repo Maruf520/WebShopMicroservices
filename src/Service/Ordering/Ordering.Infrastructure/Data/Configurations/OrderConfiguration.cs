@@ -24,6 +24,15 @@ namespace Ordering.Infrastructure.Data.Configurations
                 .HasForeignKey(x => x.OrderId);
 
             builder.ComplexProperty(
+            o => o.OrderName, nameBuilder =>
+            {
+            nameBuilder.Property(n => n.Value)
+            .HasColumnName(nameof(Order.OrderName))
+            .HasMaxLength(100)
+            .IsRequired();
+            });
+
+            builder.ComplexProperty(
              o => o.ShippingAddress, addressBuilder =>
     {
         addressBuilder.Property(a => a.FirstName)
