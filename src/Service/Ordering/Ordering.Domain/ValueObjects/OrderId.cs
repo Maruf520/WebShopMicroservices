@@ -3,7 +3,7 @@
     public record OrderId
     {
         public Guid Value { get;}
-        private OrderId(Guid value) => value = value;
+        private OrderId(Guid value) => Value = value;
         public static OrderId Of(Guid value)
         {
             ArgumentNullException.ThrowIfNull(value);
