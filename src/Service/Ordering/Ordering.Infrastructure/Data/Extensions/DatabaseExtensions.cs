@@ -1,16 +1,29 @@
-﻿namespace Ordering.Infrastructure.Data.Extensions
+﻿
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Ordering.Infrastructure.Data.Extensions
 {
     public static class DatabaseExtensions
     {
         public static async Task InitialiseDatabaseAsync(this WebApplication app)
         {
-            using var scope = app.Services.CreateScope();
+            try
+            {
+                using var scope = app.Services.CreateScope();
 
-            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            context.Database.MigrateAsync().GetAwaiter().GetResult();
+                context.Database.MigrateAsync().GetAwaiter().GetResult();
 
-            await SeedAsync(context);
+                await SeedAsync(context);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception();
+            }
+
         }
 
         private static async Task SeedAsync(ApplicationDbContext context)

@@ -12,7 +12,7 @@ namespace Ordering.Application
             services.AddMediatR(config =>
             {
                 config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-                config.AddBehavior(typeof(ValidationBehavior<,>));
+                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             });
             return services;
